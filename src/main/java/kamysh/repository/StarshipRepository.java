@@ -27,32 +27,30 @@ public class StarshipRepository{
         }
     }
 
-    public Starship findById(int id) {
+    public Starship findById(Long id) {
         Session session = sessionFactory.openSession();
         return session.get(Starship.class, id);
     }
 
-    public void delete(int starshipiId) {
+    public void delete(Long starshipiId) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
 
         try {
-            session.createQuery("delete from kamysh.entity.LoadStarship where starship=:id").setParameter("id", starshipiId).executeUpdate();
+            session
+                    .createQuery("delete from kamysh.entity.LoadStarship where starship.id =: id")
+                    .setParameter("id", starshipiId)
+                    .executeUpdate();
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
         }
     }
 
-    public int getCountSpaceMarineInStarship(int starshipiId) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-
-        try {
-            return session.createQuery("select count(id) from kamysh.entity.LoadStarship where starship=:id").setParameter("id", starshipiId).executeUpdate();
-        } catch (Exception e) {
-            transaction.rollback();
-            return 0;
-        }
+    public Long getCountSpaceMarineInStarship(Long starshipiId) {
+        return (Long) sessionFactory.openSession()
+                .createQuery("select count(*) from kamysh.entity.LoadStarship where starship.id =: id")
+                .setParameter("id", starshipiId)
+                .getSingleResult();
     }
 }

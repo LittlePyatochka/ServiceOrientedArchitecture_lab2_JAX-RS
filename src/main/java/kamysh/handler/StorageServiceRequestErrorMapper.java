@@ -1,5 +1,7 @@
 package kamysh.handler;
 
+import kamysh.dto.ErrorDTO;
+import kamysh.exceptions.ErrorMessage;
 import kamysh.exceptions.StorageServiceRequestException;
 
 import javax.ws.rs.core.Response;
@@ -12,6 +14,11 @@ public class StorageServiceRequestErrorMapper implements ExceptionMapper<Storage
     public Response toResponse(StorageServiceRequestException e) {
         return Response
                 .status(Response.Status.BAD_REQUEST)
+                .entity(ErrorDTO
+                        .builder()
+                        .error(ErrorCode.EXTERNAL_REQUEST_FAILED.name())
+                        .message(ErrorMessage.SERVER_NOT_AVAILABLE)
+                        .build())
                 .build();
     }
 }

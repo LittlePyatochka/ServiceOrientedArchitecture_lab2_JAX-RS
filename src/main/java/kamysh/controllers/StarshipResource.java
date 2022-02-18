@@ -25,14 +25,14 @@ public class StarshipResource {
             @PathParam("starship-id") String starshipId,
             @PathParam("space-marine-id") String spaceMarineId
     ) {
-        int starship, spaceMarine;
+        Long starship, spaceMarine;
         try {
-            starship = Integer.parseInt(starshipId);
+            starship = Long.parseLong(starshipId);
         } catch (NumberFormatException e) {
             throw new ArgumentFormatException("starshipId", ErrorMessage.IS_NOT_INTEGER);
         }
         try {
-            spaceMarine = Integer.parseInt(spaceMarineId);
+            spaceMarine = Long.parseLong(spaceMarineId);
         } catch (NumberFormatException e) {
             throw new ArgumentFormatException("spaceMarineId", ErrorMessage.IS_NOT_INTEGER);
         }
@@ -47,9 +47,9 @@ public class StarshipResource {
     public StarshipDTO kickOutOfStarship(
             @PathParam("starship-id") String starshipId
     ) {
-        int starship, spaceMarine;
+        Long starship;
         try {
-            starship = Integer.parseInt(starshipId);
+            starship = Long.parseLong(starshipId);
         } catch (NumberFormatException e) {
             throw new ArgumentFormatException("starshipId", ErrorMessage.IS_NOT_INTEGER);
         }

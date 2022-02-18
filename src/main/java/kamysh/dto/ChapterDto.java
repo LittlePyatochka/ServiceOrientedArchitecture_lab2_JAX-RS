@@ -1,18 +1,18 @@
 package kamysh.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @XmlRootElement
-public class StarshipDTO {
+public class ChapterDto {
+    private Long id;
+    @NotBlank(message = "Field 'name' must not be blank")
     private String name;
-    private Long totalParatroopers;
+    private String parentLegion;
 }
+

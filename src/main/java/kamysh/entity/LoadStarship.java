@@ -15,8 +15,8 @@ public class LoadStarship {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
 
-    @Column(name="SPACE_MARINE", updatable=false, insertable=false)
-    private int spaceMarineId;
+    @Column(name="SPACE_MARINE")
+    private Long spaceMarineId;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name = "STARSHIP")

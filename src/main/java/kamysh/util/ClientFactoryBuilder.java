@@ -20,12 +20,16 @@ public class ClientFactoryBuilder {
         System.out.println("KEYSTORE_PASS = " + keystorePassword);
         FileInputStream is = new FileInputStream(keystoreLocation);
         KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-        keystore.load(is, keystorePassword.toCharArray());
+//        keystore.load(is, keystorePassword.toCharArray());
+        keystore.load(is, "mousek".toCharArray());
         client = ClientBuilder.newBuilder().trustStore(keystore).build();
+        client = ClientBuilder.newBuilder().build();
         return client;
     }
 
     public static String getStorageServiceUrl() {
-        return System.getProperty("STORAGE_SERVICE_URL");
+        String URL_SERVER = System.getenv("URL_SERVER");
+        if (URL_SERVER == null) URL_SERVER = System.getProperty("URL_SERVER");
+        return URL_SERVER;
     }
 }

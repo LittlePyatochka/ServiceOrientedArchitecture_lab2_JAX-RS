@@ -1,5 +1,6 @@
 package kamysh.service;
 
+import kamysh.dto.SpaceMarineDto;
 import kamysh.dto.StarshipDTO;
 import kamysh.dto.StarshipListDTO;
 import kamysh.entity.LoadStarship;
@@ -14,7 +15,6 @@ import lombok.SneakyThrows;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 public class StarshipService {
     private final Client client;
@@ -29,23 +29,32 @@ public class StarshipService {
     }
 
     @SneakyThrows
-    public StarshipDTO setParatroopers(int starshipId, int spaceMarineId){
+    public StarshipDTO setParatroopers(Long starshipId, Long spaceMarineId){
+
+        Starship starship = starshipRepository.findById(starshipId);
+        if(starship == null){
+            throw new EntryNotFound(ErrorMessage.STARSHIP_NOT_FOUND);
+        }
 
         LoadStarship loadStarship = new LoadStarship();
-        Starship starship = starshipRepository.findById(starshipId);
         loadStarship.setStarship(starship);
         loadStarship.setSpaceMarineId(spaceMarineId);
 
-        StarshipDTO starshipDTO = StarshipDTO.builder()
-                .name(starship.getName())
-                .totalParatroopers(starshipRepository.getCountSpaceMarineInStarship(starshipId))
-                .build();
+        if (checkById(spaceMarineId)){
+            starshipRepository.save(loadStarship);
 
-        return starshipDTO;
+            StarshipDTO starshipDTO = StarshipDTO.builder()
+                    .name(starship.getName())
+                    .totalParatroopers(starshipRepository.getCountSpaceMarineInStarship(starshipId))
+                    .build();
+
+            return starshipDTO;
+        }
+        return new StarshipDTO();
     }
 
     @SneakyThrows
-    public StarshipDTO landAllParatroopers(int starshipId){
+    public StarshipDTO landAllParatroopers(Long starshipId){
         starshipRepository.delete(starshipId);
         StarshipDTO starshipDTO = StarshipDTO.builder()
                 .name(starshipRepository.findById(starshipId).getName())
@@ -55,25 +64,27 @@ public class StarshipService {
     }
 
     @SneakyThrows
-    public StarshipDTO getById(Long id) {
-        Response response = client.target(storageServiceUrl + "/api/city/" + id)
-                .request(MediaType.APPLICATION_JSON)
+    public boolean checkById(Long id) {
+        String url = storageServiceUrl + "api/space-marine/" + id;
+        System.out.println(url);
+        checkServerState();
+        Response response = client.target(url)
+                .request(MediaType.APPLICATION_XML)
                 .get();
         if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()){
-            throw new EntryNotFound(id, ErrorMessage.CITY_NOT_FOUND);
+            throw new EntryNotFound(id, ErrorMessage.SPACEMARINE_NOT_FOUND);
         }
         if (response.getStatus() > 300) throw new StorageServiceRequestException();
-        return response.readEntity(StarshipDTO.class);
+        return response.getStatus() == 200;
+
     }
 
     @SneakyThrows
-    public StarshipDTO getCityWithMaxPopulation() {
-        List<StarshipDTO> cityDTOList = client.target(storageServiceUrl + "/api/city?sorting=-population&limit=1")
-                .request(MediaType.APPLICATION_JSON)
-                .get()
-                .readEntity(StarshipListDTO.class)
-                .getResults();
-        if (cityDTOList.size() == 0) throw new EntryNotFound(ErrorMessage.CITY_NOT_FOUND);
-        return cityDTOList.get(0);
+    public void checkServerState() {
+        String url = storageServiceUrl + "api/state";
+        Response response = client.target(url).request().get();
+        if (response.getStatus() != 200){
+            throw new StorageServiceRequestException(ErrorMessage.SERVER_NOT_AVAILABLE);
+        }
     }
 }

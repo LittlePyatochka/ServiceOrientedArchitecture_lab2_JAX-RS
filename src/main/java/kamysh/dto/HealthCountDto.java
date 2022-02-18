@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CityDTO {
-    private Long id;
-    private String name;
-    private Long coordinates;
+@XmlRootElement
+public class HealthCountDto {
+    private int healthCount;
 }

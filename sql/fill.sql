@@ -4,8 +4,8 @@ VALUES ('Беда'),
        ('Победа'),
        ('Старшип');
 
-INSERT INTO LOAD_STARSHIP (SPACE_MARINE_iD, STARSHIP)
-VALUES ( 1, 2),
-       ( 1, 3),
-       ( 1, 2),
-       ( 6, 1);
+INSERT INTO LOAD_STARSHIP (SPACE_MARINE, STARSHIP)
+VALUES ( 29, 2),
+       ( 31, 3),
+       ( 30, 2),
+       ( 28, 1);
