@@ -42,7 +42,7 @@ public class StarshipResource {
 
     @DELETE
     @Path("/{starship-id}/unload-all")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_XML)
     @SneakyThrows
     public StarshipDTO kickOutOfStarship(
             @PathParam("starship-id") String starshipId

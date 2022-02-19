@@ -29,18 +29,18 @@ public class StarshipService {
     }
 
     @SneakyThrows
-    public StarshipDTO setParatroopers(Long starshipId, Long spaceMarineId){
+    public StarshipDTO setParatroopers(Long starshipId, Long spaceMarineId) {
 
         Starship starship = starshipRepository.findById(starshipId);
-        if(starship == null){
-            throw new EntryNotFound(ErrorMessage.STARSHIP_NOT_FOUND);
+        if (starship == null) {
+            throw new EntryNotFound(starshipId, ErrorMessage.STARSHIP_NOT_FOUND);
         }
 
         LoadStarship loadStarship = new LoadStarship();
         loadStarship.setStarship(starship);
         loadStarship.setSpaceMarineId(spaceMarineId);
 
-        if (checkById(spaceMarineId)){
+        if (checkById(spaceMarineId)) {
             starshipRepository.save(loadStarship);
 
             StarshipDTO starshipDTO = StarshipDTO.builder()
@@ -54,7 +54,12 @@ public class StarshipService {
     }
 
     @SneakyThrows
-    public StarshipDTO landAllParatroopers(Long starshipId){
+    public StarshipDTO landAllParatroopers(Long starshipId) {
+        Starship starship = starshipRepository.findById(starshipId);
+        if (starship == null) {
+            throw new EntryNotFound(starshipId, ErrorMessage.STARSHIP_NOT_FOUND);
+        }
+
         starshipRepository.delete(starshipId);
         StarshipDTO starshipDTO = StarshipDTO.builder()
                 .name(starshipRepository.findById(starshipId).getName())
@@ -68,22 +73,31 @@ public class StarshipService {
         String url = storageServiceUrl + "api/space-marine/" + id;
         System.out.println(url);
         checkServerState();
-        Response response = client.target(url)
-                .request(MediaType.APPLICATION_XML)
-                .get();
-        if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()){
-            throw new EntryNotFound(id, ErrorMessage.SPACEMARINE_NOT_FOUND);
+        try {
+            Response response = client.target(url)
+                    .request(MediaType.APPLICATION_XML)
+                    .get();
+            if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+                throw new EntryNotFound(id, ErrorMessage.SPACEMARINE_NOT_FOUND);
+            }
+            if (response.getStatus() > 300) throw new StorageServiceRequestException();
+            return response.getStatus() == 200;
+        } catch (Exception e) {
+            throw new StorageServiceRequestException(ErrorMessage.SERVER_NOT_AVAILABLE);
         }
-        if (response.getStatus() > 300) throw new StorageServiceRequestException();
-        return response.getStatus() == 200;
 
     }
 
     @SneakyThrows
     public void checkServerState() {
         String url = storageServiceUrl + "api/state";
-        Response response = client.target(url).request().get();
-        if (response.getStatus() != 200){
+        try {
+
+            Response response = client.target(url).request().get();
+            if (response.getStatus() != 200) {
+                throw new StorageServiceRequestException(ErrorMessage.SERVER_NOT_AVAILABLE);
+            }
+        } catch (Exception e) {
             throw new StorageServiceRequestException(ErrorMessage.SERVER_NOT_AVAILABLE);
         }
     }
