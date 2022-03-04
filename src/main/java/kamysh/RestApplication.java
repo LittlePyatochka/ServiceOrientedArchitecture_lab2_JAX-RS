@@ -2,10 +2,7 @@ package kamysh;
 
 import kamysh.controllers.StarshipResource;
 import kamysh.filters.CorsFilter;
-import kamysh.handler.ArgumentFormatExceptionMapper;
-import kamysh.handler.EntryNotFoundMapper;
-import kamysh.handler.NullPointerMapper;
-import kamysh.handler.StorageServiceRequestErrorMapper;
+import kamysh.handler.*;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -24,6 +21,7 @@ public class RestApplication extends Application {
         singletons.add(new EntryNotFoundMapper());
         singletons.add(new ArgumentFormatExceptionMapper());
         singletons.add(new CorsFilter());
+        singletons.add(new SpaceMarineOnBoardMapper());
     }
 
     @Override

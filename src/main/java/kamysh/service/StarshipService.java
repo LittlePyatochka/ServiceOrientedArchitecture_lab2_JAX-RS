@@ -1,17 +1,18 @@
 package kamysh.service;
 
-import kamysh.dto.SpaceMarineDto;
 import kamysh.dto.StarshipDTO;
-import kamysh.dto.StarshipListDTO;
 import kamysh.entity.LoadStarship;
 import kamysh.entity.Starship;
 import kamysh.exceptions.EntryNotFound;
 import kamysh.exceptions.ErrorMessage;
+import kamysh.exceptions.SpaceMarineOnBoardException;
 import kamysh.exceptions.StorageServiceRequestException;
+import kamysh.handler.SpaceMarineOnBoardMapper;
 import kamysh.repository.StarshipRepository;
 import kamysh.util.ClientFactoryBuilder;
 import lombok.SneakyThrows;
 
+import javax.persistence.NoResultException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -35,7 +36,7 @@ public class StarshipService {
         if (starship == null) {
             throw new EntryNotFound(starshipId, ErrorMessage.STARSHIP_NOT_FOUND);
         }
-
+        checkSpaceMarineOnBoard(spaceMarineId, starshipId);
         LoadStarship loadStarship = new LoadStarship();
         loadStarship.setStarship(starship);
         loadStarship.setSpaceMarineId(spaceMarineId);
@@ -73,18 +74,20 @@ public class StarshipService {
         String url = storageServiceUrl + "api/space-marine/" + id;
         System.out.println(url);
         checkServerState();
+        Response response;
         try {
-            Response response = client.target(url)
-                    .request(MediaType.APPLICATION_XML)
+            response = client.target(url)
+                    .request(MediaType.APPLICATION_XML + "; charset=UTF-8")
                     .get();
-            if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
-                throw new EntryNotFound(id, ErrorMessage.SPACEMARINE_NOT_FOUND);
-            }
-            if (response.getStatus() > 300) throw new StorageServiceRequestException();
-            return response.getStatus() == 200;
         } catch (Exception e) {
-            throw new StorageServiceRequestException(ErrorMessage.SERVER_NOT_AVAILABLE);
+            throw new StorageServiceRequestException(ErrorMessage.STORAGE_SERVICE_REQUEST_FAILED);
         }
+        if (response.getStatus() == Response.Status.NOT_FOUND.getStatusCode()) {
+            throw new EntryNotFound(id, ErrorMessage.SPACEMARINE_NOT_FOUND);
+        }
+        if (response.getStatus() > 300) throw new StorageServiceRequestException();
+        return response.getStatus() == 200;
+
 
     }
 
@@ -101,4 +104,26 @@ public class StarshipService {
             throw new StorageServiceRequestException(ErrorMessage.SERVER_NOT_AVAILABLE);
         }
     }
+
+    @SneakyThrows
+    public void checkSpaceMarineOnBoard(final long spaceMarineId, final long currentStarshipId) {
+        System.err.println("!!!!!!!!!!!!!!!!!!!!!");
+
+        try {
+
+            Long starshipId = starshipRepository.getStarshipIdBySpaceMarine(spaceMarineId);
+
+            System.err.println("!!!!!!!!!!!!!!!!!!!!! = " + starshipId);
+
+            if (currentStarshipId == starshipId) {
+                throw new SpaceMarineOnBoardException();
+            } else {
+                throw new SpaceMarineOnBoardException(starshipId);
+            }
+        } catch (Exception e) {
+            return;
+        }
+    }
+
+
 }

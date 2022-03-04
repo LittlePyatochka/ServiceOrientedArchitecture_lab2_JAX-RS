@@ -19,7 +19,7 @@ public class StarshipResource {
 
     @POST
     @Path("/{starship-id}/load/{space-marine-id}")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces(value=MediaType.APPLICATION_XML + "; charset=UTF-8")
     @SneakyThrows
     public StarshipDTO putOnStarship(
             @PathParam("starship-id") String starshipId,
@@ -40,9 +40,9 @@ public class StarshipResource {
         return starshipService.setParatroopers(starship, spaceMarine);
     }
 
-    @DELETE
+    @POST
     @Path("/{starship-id}/unload-all")
-    @Produces(MediaType.APPLICATION_XML)
+    @Produces(MediaType.APPLICATION_XML + "; charset=UTF-8")
     @SneakyThrows
     public StarshipDTO kickOutOfStarship(
             @PathParam("starship-id") String starshipId

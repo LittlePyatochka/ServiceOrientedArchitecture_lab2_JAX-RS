@@ -53,4 +53,11 @@ public class StarshipRepository{
                 .setParameter("id", starshipiId)
                 .getSingleResult();
     }
+
+    public Long getStarshipIdBySpaceMarine(final Long spaceMarineId) {
+        return (Long) sessionFactory.openSession()
+                .createQuery("select starship.id from kamysh.entity.LoadStarship where spaceMarineId =: id")
+                .setParameter("id", spaceMarineId)
+                .getSingleResult();
+    }
 }

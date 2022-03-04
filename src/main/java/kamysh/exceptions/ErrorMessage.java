@@ -7,4 +7,6 @@ public class ErrorMessage {
     public static final String STARSHIP_NOT_FOUND = "Starship not found";
     public static final String STORAGE_SERVICE_REQUEST_FAILED = "Storage service request failed";
     public static final String SERVER_NOT_AVAILABLE = "Server not available";
+    public static final String SPACE_MARINE_ON_BOARD = "Space marine on board";
+    public static final String SPACE_MARINE_ON_ANOTHER_BOARD = "Space marine on another board";
 }

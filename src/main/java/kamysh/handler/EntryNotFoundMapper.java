@@ -21,7 +21,7 @@ public class EntryNotFoundMapper implements ExceptionMapper<EntryNotFound> {
                     .entity(ErrorDTO
                             .builder()
                             .error(ErrorCode.ENTRY_NOT_FOUND.name())
-                            .message(ErrorMessage.NOT_FOUND)
+                            .message(e.getMessage())
                             .build())
                     .build();
         }

@@ -17,7 +17,7 @@ public class StorageServiceRequestErrorMapper implements ExceptionMapper<Storage
                 .entity(ErrorDTO
                         .builder()
                         .error(ErrorCode.EXTERNAL_REQUEST_FAILED.name())
-                        .message(ErrorMessage.SERVER_NOT_AVAILABLE)
+                        .message(ErrorMessage.STORAGE_SERVICE_REQUEST_FAILED)
                         .build())
                 .build();
     }
