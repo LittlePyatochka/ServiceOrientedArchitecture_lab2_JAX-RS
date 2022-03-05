@@ -47,6 +47,20 @@ public class StarshipRepository{
         }
     }
 
+    public void deleteParatrooper(Long spaceMarineId) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            session
+                    .createQuery("delete from kamysh.entity.LoadStarship where spaceMarineId =: id")
+                    .setParameter("id", spaceMarineId)
+                    .executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+        }
+    }
+
     public Long getCountSpaceMarineInStarship(Long starshipiId) {
         return (Long) sessionFactory.openSession()
                 .createQuery("select count(*) from kamysh.entity.LoadStarship where starship.id =: id")

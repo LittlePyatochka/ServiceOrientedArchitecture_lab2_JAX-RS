@@ -107,14 +107,8 @@ public class StarshipService {
 
     @SneakyThrows
     public void checkSpaceMarineOnBoard(final long spaceMarineId, final long currentStarshipId) {
-        System.err.println("!!!!!!!!!!!!!!!!!!!!!");
-
         try {
-
             Long starshipId = starshipRepository.getStarshipIdBySpaceMarine(spaceMarineId);
-
-            System.err.println("!!!!!!!!!!!!!!!!!!!!! = " + starshipId);
-
             if (currentStarshipId == starshipId) {
                 throw new SpaceMarineOnBoardException();
             } else {
@@ -125,5 +119,8 @@ public class StarshipService {
         }
     }
 
-
+    @SneakyThrows
+    public void landParatrooper(Long spaceMatine) {
+        starshipRepository.deleteParatrooper(spaceMatine);
+    }
 }

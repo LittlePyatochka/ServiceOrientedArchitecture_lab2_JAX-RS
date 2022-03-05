@@ -56,4 +56,21 @@ public class StarshipResource {
         return starshipService.landAllParatroopers(starship);
 
     }
+
+    @POST
+    @Path("/{space-marine-id}")
+    @Produces(MediaType.APPLICATION_XML + "; charset=UTF-8")
+    @SneakyThrows
+    public void kickOutOfStarshipCurrentSpaceMatine(
+            @PathParam("space-marine-id") String spaceMarineId
+    ) {
+        Long spaceMarine;
+        try {
+            spaceMarine = Long.parseLong(spaceMarineId);
+        } catch (NumberFormatException e) {
+            throw new ArgumentFormatException("spaceMarine", ErrorMessage.IS_NOT_INTEGER);
+        }
+        starshipService.landParatrooper(spaceMarine);
+
+    }
 }
